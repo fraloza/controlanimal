@@ -1,0 +1,8 @@
+## agregar
+1.- crear base de datos bd_selva (utf8_unicode)
+
+##comando para el login
+1.- composer update --dev
+2.- php artisan migrate:install
+3.- php artisan migrate
+4.- php artisan db:seed

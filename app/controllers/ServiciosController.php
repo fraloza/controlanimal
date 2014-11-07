@@ -1,0 +1,162 @@
+<?php
+
+class ServiciosController extends BaseController {
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+
+
+    public function __construct()
+    {        
+        $this->beforeFilter(function(){
+            if(!Auth::check()) {
+                return View::make('error');
+            }
+        });
+    }
+    
+    public function getIndex()
+    {
+        return View::make('servicios.index');
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+
+    public function getServicios()
+    {
+        $servicios = DB::table('servicios as l')
+                    ->join('tiposervicios as p','l.idtiposervicio','=','p.id')
+                    ->select('l.id','l.descripcion','p.descripcion as tiposervicio')
+                    ->where('l.estado','1')
+                    ->orderBy('l.id','DESC')
+                    ->get();
+        return $servicios;
+    }   
+
+    public function getEditar()
+    {
+        $id = Input::get('id');
+        $servicios = Servicio::select('id','descripcion','idtiposervicio')
+                    ->where('id', $id)
+                    ->get();
+        return $servicios;
+    }
+
+    public function getTipoServicios()
+    {
+        $servicios = Tiposervicio::select('id','descripcion')
+                    ->where('estado','1')
+                    ->get();
+        return $servicios;
+    }
+
+    public function action() {
+
+        $servicio = new Servicio;
+
+        $operacion = Input::get('oper');
+
+        switch ($operacion) {
+
+            case 'add':
+                $servicio->descripcion = Input::get('descripcion');
+                $servicio->idtiposervicio = Input::get('tiposervicio');
+                $servicio->estado = 1;
+                $servicio->save();
+                $servicio = DB::table('servicios as l')
+                            ->join('tiposervicios as p','l.idtiposervicio','=','p.id')
+                            ->select('l.id','l.descripcion','p.descripcion as tiposervicio')
+                            ->orderBy('id','desc')->take(1)->get();
+                return $servicio;
+                break;
+
+            case 'edit':
+                $id = Input::get('id');
+                $servicio = Servicio::find($id);
+                $servicio->descripcion = Input::get('descripcion');
+                $servicio->idtiposervicio = Input::get('tiposervicio');
+                $servicio->save();
+                $servicio = DB::table('servicios as l')
+                            ->join('tiposervicios as p','l.idtiposervicio','=','p.id')
+                            ->select('l.id','l.descripcion','p.descripcion as tiposervicio')
+                            ->where('l.id',$id)
+                            ->get();
+                return $servicio;
+                break;
+
+            case 'del':
+                $id = Input::get('id');
+                $servicio = Servicio::find($id);
+                $servicio->estado = 0;
+                $servicio->save();
+                break;
+        }
+    }
+
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store()
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function update($id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
+
+}
